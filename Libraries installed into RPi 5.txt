@@ -1,0 +1,19 @@
+Libraries installed into Pi 5 
+
+apt system lilb
+
+- Git
+- build essentials
+- cmake
+- python3-dev
+
+
+
+pip install lilb
+
+- rplidar-roboticia
+- matplotlib: draws the map window
+- numpy
+- BreezySLAM
+- scipy --break-system-packages
+- gtsam --break-system-packages
