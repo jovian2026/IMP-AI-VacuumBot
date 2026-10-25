@@ -1,0 +1,73 @@
+// Motor pins (from your wiring)
+const int ENA = 5, IN1 = 4, IN2 = 7;     // left motor
+const int ENB = 6, IN3 = 8, IN4 = 12;    // right motor
+
+// Encoder pins
+const int L_A = 2, L_B = 9;
+const int R_A = 3, R_B = 10;
+
+// Flip these if needed
+const int L_ENC_DIR = 1;         // -1 if left count goes down when the wheel goes forward
+const int R_ENC_DIR = 1;         // -1 if right count goes down when the wheel goes forward
+const bool L_MOTOR_INV = false;  // true if the left wheel spins backward on "forward"
+const bool R_MOTOR_INV = false;  // true if the right wheel spins backward on "forward"
+
+volatile long leftTicks = 0, rightTicks = 0;
+int speedPWM = 120;              // 0-255, start low
+unsigned long lastCmd = 0;
+
+void leftISR()  { leftTicks  += (digitalRead(L_B) == HIGH ? 1 : -1) * L_ENC_DIR; }
+void rightISR() { rightTicks += (digitalRead(R_B) == HIGH ? 1 : -1) * R_ENC_DIR; }
+
+void setMotor(int inA, int inB, int en, int spd, bool inv) {
+  if (inv) spd = -spd;
+  if (spd > 0)      { digitalWrite(inA, HIGH); digitalWrite(inB, LOW);  analogWrite(en, spd); }
+  else if (spd < 0) { digitalWrite(inA, LOW);  digitalWrite(inB, HIGH); analogWrite(en, -spd); }
+  else              { digitalWrite(inA, LOW);  digitalWrite(inB, LOW);  analogWrite(en, 0); }
+}
+
+void drive(int l, int r) {
+  setMotor(IN1, IN2, ENA, l, L_MOTOR_INV);
+  setMotor(IN3, IN4, ENB, r, R_MOTOR_INV);
+  lastCmd = millis();
+}
+
+void setup() {
+  Serial.begin(115200);
+  int outs[] = {ENA, IN1, IN2, ENB, IN3, IN4};
+  for (int p : outs) pinMode(p, OUTPUT);
+  pinMode(L_A, INPUT_PULLUP); pinMode(L_B, INPUT_PULLUP);
+  pinMode(R_A, INPUT_PULLUP); pinMode(R_B, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(L_A), leftISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(R_A), rightISR, RISING);
+  drive(0, 0);
+  Serial.println("w=fwd s=back a=spin left d=spin right x=stop +/-=speed r=reset counts");
+}
+
+void loop() {
+  if (Serial.available()) {
+    char c = Serial.read();
+    switch (c) {
+      case 'w': drive( speedPWM,  speedPWM); break;
+      case 's': drive(-speedPWM, -speedPWM); break;
+      case 'a': drive(-speedPWM,  speedPWM); break;
+      case 'd': drive( speedPWM, -speedPWM); break;
+      case 'x': drive(0, 0); break;
+      case '+': speedPWM = min(255, speedPWM + 20); break;
+      case '-': speedPWM = max(60,  speedPWM - 20); break;
+      case 'r': noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts(); break;
+    }
+  }
+
+  // Safety: stop if no command for 1.5 s
+  if (millis() - lastCmd > 1500) drive(0, 0);
+
+  static unsigned long lastPrint = 0;
+  if (millis() - lastPrint >= 100) {
+    lastPrint = millis();
+    noInterrupts(); long l = leftTicks, r = rightTicks; interrupts();
+    Serial.print("L: "); Serial.print(l);
+    Serial.print("   R: "); Serial.print(r);
+    Serial.print("   PWM: "); Serial.println(speedPWM);
+  }
+}
