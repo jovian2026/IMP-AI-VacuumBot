@@ -34,6 +34,14 @@ void drive(int l, int r) {
   lastCmd = millis();
 }
 
+// NEW: actively brake instead of coasting
+void brake() {
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, HIGH); analogWrite(ENA, 255);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, HIGH); analogWrite(ENB, 255);
+  delay(150);
+  drive(0, 0);
+}
+
 void setup() {
   Serial.begin(115200);
   int outs[] = {ENA, IN1, IN2, ENB, IN3, IN4};
@@ -43,7 +51,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(L_A), leftISR, RISING);
   attachInterrupt(digitalPinToInterrupt(R_A), rightISR, RISING);
   drive(0, 0);
-  Serial.println("w=fwd s=back a=spin left d=spin right x=stop +/-=speed r=reset counts");
+  Serial.println("w=fwd s=back a=spin left d=spin right x=stop g=1m q=spin +/-=speed r=reset counts");
 }
 
 void loop() {
@@ -54,7 +62,7 @@ void loop() {
       case 's': drive(-speedPWM, -speedPWM); break;
       case 'a': drive(-speedPWM,  speedPWM); break;
       case 'd': drive( speedPWM, -speedPWM); break;
-      case 'x': runFwd = false; runSpin = false; drive(0, 0); break;
+      case 'x': runFwd = false; runSpin = false; brake(); break;   // CHANGED
       case '+': speedPWM = min(255, speedPWM + 20); break;
       case '-': speedPWM = max(60,  speedPWM - 20); break;
       case 'r': noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts(); break;
@@ -63,21 +71,21 @@ void loop() {
         targetTicks = 4207;                  // 1000 mm / 0.2377 mm per tick
         runFwd = true; runSpin = false;
         drive(speedPWM, speedPWM);
-      break;
+        break;
       case 'q':  // spin left one "360" by the numbers
-          noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
-          targetTicks = 2445;                  // pi x 185 mm / 0.2377 mm per tick
-          runSpin = true; runFwd = false;
-          drive(-speedPWM, speedPWM);
-      break;
+        noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
+        targetTicks = 2445;                  // pi x 185 mm / 0.2377 mm per tick
+        runSpin = true; runFwd = false;
+        drive(-speedPWM, speedPWM);
+        break;
     }
   }
 
   if (runFwd || runSpin) {
-  noInterrupts(); long l = leftTicks, r = rightTicks; interrupts();
-  long done = runFwd ? (l + r) / 2 : (r - l) / 2;
-  if (done >= targetTicks) { runFwd = false; runSpin = false; drive(0, 0); }
-  else lastCmd = millis();             // keep the safety timeout from firing
+    noInterrupts(); long l = leftTicks, r = rightTicks; interrupts();
+    long done = runFwd ? (l + r) / 2 : (r - l) / 2;
+    if (done >= targetTicks) { runFwd = false; runSpin = false; brake(); }   // CHANGED
+    else lastCmd = millis();             // keep the safety timeout from firing
   }
 
   // Safety: stop if no command for 1.5 s
