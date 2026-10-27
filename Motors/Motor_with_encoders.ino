@@ -3,12 +3,12 @@ const int ENA = 5, IN1 = 4, IN2 = 7;     // left motor
 const int ENB = 6, IN3 = 8, IN4 = 12;    // right motor
 
 // Encoder pins
-const int L_A = 2, L_B = 9;
-const int R_A = 3, R_B = 10;
+const int L_A = 2, L_B = 9;   //(green, yellow )
+const int R_A = 3, R_B = 10;  // (yellow, green)
 
 // Flip these if needed
-const int L_ENC_DIR = 1;         // -1 if left count goes down when the wheel goes forward
-const int R_ENC_DIR = 1;         // -1 if right count goes down when the wheel goes forward
+const int L_ENC_DIR = 1;         // -1 if left count goes down 
+const int R_ENC_DIR = 1;         // -1 if right count goes down 
 const bool L_MOTOR_INV = false;  // true if the left wheel spins backward on "forward"
 const bool R_MOTOR_INV = false;  // true if the right wheel spins backward on "forward"
 
