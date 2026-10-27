@@ -14,6 +14,8 @@ const bool R_MOTOR_INV = false;  // true if the right wheel spins backward on "f
 
 volatile long leftTicks = 0, rightTicks = 0;
 int speedPWM = 120;              // 0-255, start low
+bool runFwd = false, runSpin = false;
+long targetTicks = 0;
 unsigned long lastCmd = 0;
 
 void leftISR()  { leftTicks  += (digitalRead(L_B) == HIGH ? 1 : -1) * L_ENC_DIR; }
@@ -52,11 +54,30 @@ void loop() {
       case 's': drive(-speedPWM, -speedPWM); break;
       case 'a': drive(-speedPWM,  speedPWM); break;
       case 'd': drive( speedPWM, -speedPWM); break;
-      case 'x': drive(0, 0); break;
+      case 'x': runFwd = false; runSpin = false; drive(0, 0); break;
       case '+': speedPWM = min(255, speedPWM + 20); break;
       case '-': speedPWM = max(60,  speedPWM - 20); break;
       case 'r': noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts(); break;
+      case 'g':  // drive 1 m forward
+        noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
+        targetTicks = 4207;                  // 1000 mm / 0.2377 mm per tick
+        runFwd = true; runSpin = false;
+        drive(speedPWM, speedPWM);
+      break;
+      case 'q':  // spin left one "360" by the numbers
+          noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
+          targetTicks = 2445;                  // pi x 185 mm / 0.2377 mm per tick
+          runSpin = true; runFwd = false;
+          drive(-speedPWM, speedPWM);
+      break;
     }
+  }
+
+  if (runFwd || runSpin) {
+  noInterrupts(); long l = leftTicks, r = rightTicks; interrupts();
+  long done = runFwd ? (l + r) / 2 : (r - l) / 2;
+  if (done >= targetTicks) { runFwd = false; runSpin = false; drive(0, 0); }
+  else lastCmd = millis();             // keep the safety timeout from firing
   }
 
   // Safety: stop if no command for 1.5 s
