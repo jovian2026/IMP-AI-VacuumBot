@@ -68,13 +68,13 @@ void loop() {
       case 'r': noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts(); break;
       case 'g':  // drive 1 m forward
         noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
-        targetTicks = 4207;                  // 1000 mm / 0.2377 mm per tick
+        targetTicks = 4022;                  // 1000 mm / 0.2486 mm per tick
         runFwd = true; runSpin = false;
         drive(speedPWM, speedPWM);
         break;
       case 'q':  // spin left one "360" by the numbers
         noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
-        targetTicks = 2445;                  // pi x 185 mm / 0.2377 mm per tick
+        targetTicks = 2187;                  // pi x 173 mm / 0.2486 mm per tick
         runSpin = true; runFwd = false;
         drive(-speedPWM, speedPWM);
         break;
