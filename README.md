@@ -19,3 +19,14 @@ components nearly bought progress: 98% <br>
 - `navigation/` — SLAM, path planning, PID control
 - `ai/` — CNN floor/dirt classifiers
 - `app/` — Flask API + MQTT for mobile app communication
+
+## Calibration Constants
+- Ticks per wheel revolution: 859
+- mm per encoder tick: 0.2486
+- Wheelbase: 173 mm
+- Wheel diameter: 65 mm
+
+## Known Issues
+- Robot tilts/veers slightly left during straight-line driving (under investigation)
+- Loop closure (g2o/GTSAM) not implemented — SLAM currently odometry + LiDAR scan only, tuned for ~2m map size
+- LiDAR not yet mounted on chassis — currently tethered via USB/12V on base plate
