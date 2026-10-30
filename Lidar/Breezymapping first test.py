@@ -7,7 +7,7 @@ from rplidar import RPLidar, RPLidarException
 
 PORT = '/dev/ttyUSB0'
 MAP_SIZE_PIXELS = 500
-MAP_SIZE_METERS = 4
+MAP_SIZE_METERS = 3
 MIN_SAMPLES = 80
 MAX_DIST_MM = 5500
 MIN_DIST_MM = 150
