@@ -5,8 +5,8 @@ using LiDAR SLAM, wheel odometry, and CNN-based floor/dirt classification <br>
 components nearly bought progress: 98% <br>
 
 ## Hardware
-- Raspberry Pi 5 (4GB) — main compute, SLAM, CNN inference
-- Arduino Uno R3 — motor control, encoder reading
+- Raspberry Pi 5 (8GB) — main compute, SLAM, CNN inference, Ir Sesnors
+- Arduino Uno R3 — motor control, encoder reading, Analog sensors
 - Slamtec RPLIDAR A1M8 — SLAM mapping
 - Pi Camera Module 2 — floor/dirt CNN input
 - JGA25-370 DC gear motors x2 (65mm wheels, measured 859 ticks/rev)
