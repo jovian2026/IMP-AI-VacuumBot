@@ -1,0 +1,4 @@
+0 Marbles Class
+1 Carpet Class
+2 wood floor
+3 Concrete Class
