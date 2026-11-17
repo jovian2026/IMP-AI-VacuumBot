@@ -8,3 +8,4 @@
 [*Lidar Inference test*] (https://youtube.com/shorts/LyYcArhOkUA) <br>
 [*Odometry Integration with Pi*] (https://youtu.be/VMF_AwEf1Oc)
 [*Floor Classifier with Teachables Machines*] (https://youtu.be/pxcrNFD2rJc)
+[*Floor Classifier with EI(edge impulse)] (https://youtu.be/8_boRrpqqgw)
