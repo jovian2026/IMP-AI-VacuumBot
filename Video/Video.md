@@ -6,3 +6,4 @@
 [*Encoder 360° Movement*] (https://www.youtube.com/shorts/MlteAs-GSkg) <br>
 [*Lidar Open Area test*] (https://youtube.com/shorts/4BtGfPFmLoo) <br>
 [*Lidar Inference test*] (https://youtube.com/shorts/LyYcArhOkUA) <br>
+[*Odometry Integration with Pi*] (https://youtu.be/VMF_AwEf1Oc)
