@@ -1,4 +1,4 @@
-// Motor pins (from your wiring)
+// Motor pins 
 const int ENA = 5, IN1 = 4, IN2 = 7;     // left motor
 const int ENB = 6, IN3 = 8, IN4 = 12;    // right motor
 
@@ -34,7 +34,7 @@ void drive(int l, int r) {
   lastCmd = millis();
 }
 
-// NEW: actively brake instead of coasting
+//actively brake instead of coasting
 void brake() {
   digitalWrite(IN1, HIGH); digitalWrite(IN2, HIGH); analogWrite(ENA, 255);
   digitalWrite(IN3, HIGH); digitalWrite(IN4, HIGH); analogWrite(ENB, 255);
@@ -62,19 +62,19 @@ void loop() {
       case 's': drive(-speedPWM, -speedPWM); break;
       case 'a': drive(-speedPWM,  speedPWM); break;
       case 'd': drive( speedPWM, -speedPWM); break;
-      case 'x': runFwd = false; runSpin = false; brake(); break;   // CHANGED
+      case 'x': runFwd = false; runSpin = false; brake(); break;   // new added
       case '+': speedPWM = min(255, speedPWM + 20); break;
       case '-': speedPWM = max(60,  speedPWM - 20); break;
       case 'r': noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts(); break;
       case 'g':  // drive 1 m forward
         noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
-        targetTicks = 4022;                  // 1000 mm / 0.2486 mm per tick
+        targetTicks = 3100;                  // 1000 mm / 0.2486 mm per tick
         runFwd = true; runSpin = false;
         drive(speedPWM, speedPWM);
         break;
       case 'q':  // spin left one "360" by the numbers
         noInterrupts(); leftTicks = 0; rightTicks = 0; interrupts();
-        targetTicks = 2187;                  // pi x 173 mm / 0.2486 mm per tick
+        targetTicks = 2095;                  // pi x 173 mm / 0.2486 mm per tick
         runSpin = true; runFwd = false;
         drive(-speedPWM, speedPWM);
         break;
