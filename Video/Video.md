@@ -4,3 +4,8 @@
 [*Encoder Manual Control With Arudino*] (https://www.youtube.com/shorts/ljE-tu5_85M) <br>
 [*Encoder 1M Movement*] (https://www.youtube.com/shorts/MlteAs-GSkg) <br>
 [*Encoder 360° Movement*] (https://www.youtube.com/shorts/MlteAs-GSkg) <br>
+[*Lidar Open Area test*] (https://youtube.com/shorts/4BtGfPFmLoo) <br>
+[*Lidar Inference test*] (https://youtube.com/shorts/LyYcArhOkUA) <br>
+[*Odometry Integration with Pi*] (https://youtu.be/VMF_AwEf1Oc)
+[*Floor Classifier with Teachables Machines*] (https://youtu.be/pxcrNFD2rJc)
+[*Floor Classifier with EI(edge impulse)] (https://youtu.be/8_boRrpqqgw)
