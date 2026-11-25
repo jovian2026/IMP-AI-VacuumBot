@@ -8,7 +8,7 @@ from rplidar import RPLidar
 # ---------- Settings ----------
 UNO_PORT = '/dev/ttyACM0'
 A0 = 179                      # lidar angle that points at the robot's front
-LIDAR_OFFSET_MM = 0         # + if the lidar is AHEAD of the wheel axle, - if behind
+LIDAR_OFFSET_MM = 20         # + if the lidar is AHEAD of the wheel axle, - if behind
 MM_PER_TICK = 0.230
 WHEELBASE_MM = 157.0
 MAP_PIXELS = 500
@@ -22,9 +22,9 @@ MAX_TURN_DPS = 40                        # no map updates while turning faster t
 
 # ---------- SLAM: one with odometry, one lidar-only ----------
 slam_odo = RMHC_SLAM(LaserModel(), MAP_PIXELS, MAP_METERS,
-                     map_quality=50, hole_width_mm=300, random_seed=9999)
+                     map_quality=50, hole_width_mm=150, random_seed=9999,sigma_xy_mm=40, sigma_theta_degrees=5)
 slam_lid = RMHC_SLAM(LaserModel(), MAP_PIXELS, MAP_METERS,
-                     map_quality=50, hole_width_mm=300, random_seed=9999)
+                     map_quality=50, hole_width_mm=150, random_seed=9999) # hole width for thinner walls
 mb_odo = bytearray(MAP_PIXELS * MAP_PIXELS)
 mb_lid = bytearray(MAP_PIXELS * MAP_PIXELS)
 
@@ -212,12 +212,12 @@ try:
                         dxy, dth, dt = pc
                         moving_now = abs(dxy) > 1.0 or abs(dth) > 0.3
                         if moving_now:
-                            settle = 2                                            # two extra scans once it stops
+                            settle = 4                                            # two extra scans once it stops
                         if moving_now or settle > 0:
                             fast = abs(dth) / dt > MAX_TURN_DPS
                             slam_odo.update(dists, pose_change=pc,
                                             scan_angles_degrees=angs,
-                                            should_update_map=not fast)
+                                            should_update_map=not moving_now)
                             if not moving_now:
                                 settle -= 1
                     slam_lid.update(dists, scan_angles_degrees=angs)              # lidar-only baseline always runs
